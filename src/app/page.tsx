@@ -3,13 +3,14 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardTitle } from "@/shared/ui/card";
 
 export default async function Home() {
-
-  const games = await prisma.game.findMany()
-  console.log(games)
+  const games = await prisma.game.findMany();
+  console.log(games);
   return (
     <>
-      <Button size={'lg'} variant={'destructive'}>Hello</Button>
-      {games.map(game => (
+      <Button size={"lg"} variant={"destructive"}>
+        Hello
+      </Button>
+      {games.map((game) => (
         <Card key={game.id}>
           <CardTitle>{game.name}</CardTitle>
         </Card>
@@ -17,5 +18,3 @@ export default async function Home() {
     </>
   );
 }
-
- 
