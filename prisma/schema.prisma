@@ -15,12 +15,13 @@ enum GameStatus {
   gameOverDraw
 }
 model Game {
-  id    String   @id @default(cuid())
-  status GameStatus
-  players User[] @relation("games")
-  winner User?   @relation(fields: [winnerId], references: [id])
-  winnerId String?
-  gameOverAt String?
+  id          String   @id @default(cuid())
+  status      GameStatus
+  players     User[] @relation("games")
+  winner      User?   @relation(fields: [winnerId], references: [id])
+  winnerId    String?
+  field       Json?
+  gameOverAt  String?
 }
 
 model User { 
