@@ -13,21 +13,21 @@ export type GameIdleEntity ={
 export type GameInProgressEntity = {
     id: string;
     players: PlayerEntity[];
-    field: Field[];
+    field: Field;
     status: 'inProgress';
 }
 
 export type GameOverEntity = {
     id: string;
     players: PlayerEntity[];
-    field: Field[];
+    field: Field;
     winner: PlayerEntity;
     status: 'gameOver';
 }
 export type GameOverDrawEntity = {
     id: string;
     players: PlayerEntity[];
-    field: Field[];
+    field: Field;
     status: 'gameOverDraw';
 }
 

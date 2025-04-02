@@ -1,11 +1,12 @@
 import { prisma } from "@/shared/lib/db";
 import { Game, Prisma, User } from "@prisma/client";
-import { Field, GameEntity, GameIdleEntity, GameInProgressEntity, GameOverDrawEntity} from "../domain";
+import { GameEntity, GameIdleEntity, GameOverEntity} from "../domain";
 import { z } from "zod";
 
 
-async function gameList(): Promise<GameEntity[]> {
+async function gameList(where?: Prisma.GameWhereInput): Promise<GameEntity[]> {
     const games = await prisma.game.findMany({
+        where,
         include: {
             winner: true,
             players: true,
@@ -19,6 +20,7 @@ const fieldSchema = z.array(z.union([z.string(), z.null()]))
 
 function dbGameToGameEntity(game: Game & {
     players: User[]
+    winner?: User | null
 }): GameEntity {
    switch (game.status) {
        case "idle":{
@@ -28,29 +30,27 @@ function dbGameToGameEntity(game: Game & {
             status: "idle",
         } satisfies GameIdleEntity;
        }
-       case "inProgress":{
+       case "inProgress":
+       case "gameOverDraw":{
+        return { 
+            id: game.id,
+            players: game.players,
+            field: fieldSchema.parse(game.field),
+            status: game.status,
+        } 
+       }
+       case "gameOver":{
+        if(!game.winner){
+            throw new Error("Winner should be in gameover")
+        }
         return {
             id: game.id,
             players: game.players,
             status: game.status,
             field: fieldSchema.parse(game.field),
-        } satisfies GameInProgressEntity;
-       }
-       case "gameOver":{
-        return {
-            id: game.id,
-            players: game.players,
-            status: game.status,
+            winner: game.winner,
         } satisfies GameOverEntity;
-       }
-       case "gameOverDraw":{
-        return {
-            id: game.id,
-            players: game.players,
-            field: Field[],
-            status: game.status,
-        } satisfies GameOverDrawEntity;
-       }
+       } 
    }
 }
     
